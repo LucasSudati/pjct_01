@@ -1,36 +1,29 @@
-# pjct_01 — Snake
+# Icon Studio
 
-Um jogo da cobrinha simples feito em Python com PySide6.
+Editor vetorial web compacto para criar ícones diretamente no navegador.
 
 ## Recursos
 
-- Movimento com setas ou WASD
-- Pontuação e recorde local
-- Pausa e reinício
-- Velocidade aumenta conforme a pontuação
-- Interface escura e minimalista
+- Canvas SVG 512 × 512
+- Seleção e movimentação de objetos
+- Retângulos, elipses, linhas e texto
+- Preenchimento, contorno e opacidade
+- Painel de camadas
+- Duplicar e excluir
+- Undo / redo
+- Zoom
+- Exportação SVG e PNG
+- Sem backend e sem dependências
 
 ## Executar
 
-Requer Python 3.10 ou superior.
+Abra `index.html` no navegador ou publique o repositório com GitHub Pages.
 
-```bash
-pip install -r requirements.txt
-python main.py
-```
+## Atalhos
 
-## Controles
-
-| Tecla | Ação |
-|---|---|
-| Setas / WASD | Mover |
-| Espaço | Iniciar / pausar |
-| R | Reiniciar |
-
-## Versão
-
-v0.1.0
-
----
+- `Delete`: excluir seleção
+- `Ctrl + D`: duplicar
+- `Ctrl + Z`: desfazer
+- `Ctrl + Y`: refazer
 
 Feito por Lucas Sudati.
