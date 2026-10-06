@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Icon Studio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand"><div class="brand-mark">IS</div><div><strong>Icon Studio</strong><span>Vector workspace</span></div></div>
+      <div class="top-actions">
+        <button class="ghost" id="newBtn">Novo</button>
+        <button class="ghost" id="undoBtn">↶</button>
+        <button class="ghost" id="redoBtn">↷</button>
+        <button class="primary" id="exportSvg">Exportar SVG</button>
+        <button class="primary soft" id="exportPng">PNG</button>
+      </div>
+    </header>
+
+    <aside class="tools panel">
+      <button class="tool active" data-tool="select" title="Selecionar">↖<span>Selecionar</span></button>
+      <button class="tool" data-tool="rect" title="Retângulo">□<span>Retângulo</span></button>
+      <button class="tool" data-tool="ellipse" title="Elipse">○<span>Elipse</span></button>
+      <button class="tool" data-tool="line" title="Linha">╱<span>Linha</span></button>
+      <button class="tool" data-tool="text" title="Texto">T<span>Texto</span></button>
+      <div class="separator"></div>
+      <button class="tool" id="duplicateBtn" title="Duplicar">⧉<span>Duplicar</span></button>
+      <button class="tool danger" id="deleteBtn" title="Excluir">⌫<span>Excluir</span></button>
+    </aside>
+
+    <main class="workspace">
+      <div class="workspace-bar">
+        <span id="docName">Novo ícone</span>
+        <div class="zoom"><button id="zoomOut">−</button><span id="zoomLabel">100%</span><button id="zoomIn">+</button></div>
+      </div>
+      <div class="stage" id="stage">
+        <svg id="canvas" viewBox="0 0 512 512" width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+          <rect id="artboard" width="512" height="512" fill="#ffffff"/>
+          <g id="objects"></g>
+          <g id="selectionLayer"></g>
+        </svg>
+      </div>
+      <div class="statusbar"><span>512 × 512 px</span><span id="status">Selecionar</span></div>
+    </main>
+
+    <aside class="properties panel">
+      <section>
+        <div class="section-title">Documento</div>
+        <label>Fundo <input type="color" id="background" value="#ffffff"></label>
+      </section>
+      <section>
+        <div class="section-title">Aparência</div>
+        <label>Preenchimento <input type="color" id="fill" value="#69a7ff"></label>
+        <label>Contorno <input type="color" id="stroke" value="#172033"></label>
+        <label>Espessura <div class="field"><input type="range" id="strokeWidth" min="0" max="24" value="0"><output id="strokeValue">0</output></div></label>
+        <label>Opacidade <div class="field"><input type="range" id="opacity" min="10" max="100" value="100"><output id="opacityValue">100%</output></div></label>
+      </section>
+      <section id="transformSection">
+        <div class="section-title">Transformar</div>
+        <div class="grid2">
+          <label>X<input type="number" id="posX"></label>
+          <label>Y<input type="number" id="posY"></label>
+          <label>W<input type="number" id="sizeW" min="1"></label>
+          <label>H<input type="number" id="sizeH" min="1"></label>
+        </div>
+      </section>
+      <section>
+        <div class="section-title">Camadas</div>
+        <div id="layers" class="layers"><div class="empty">Nenhum objeto</div></div>
+      </section>
+    </aside>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
