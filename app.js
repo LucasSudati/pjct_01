@@ -39,7 +39,37 @@ $("stroke").oninput=e=>{if(selected)selected.setAttribute("stroke",e.target.valu
 $("strokeWidth").oninput=e=>{$("strokeValue").value=e.target.value;if(selected)selected.setAttribute("stroke-width",e.target.value)};$("strokeWidth").onchange=snapshot;
 $("opacity").oninput=e=>{$("opacityValue").value=e.target.value+"%";if(selected)selected.setAttribute("opacity",e.target.value/100)};$("opacity").onchange=snapshot;$("blur").oninput=e=>{$("blurValue").value=e.target.value;if(selected)applyBlur(false)};$("blur").onchange=()=>{if(selected)applyBlur(true)};
 $("radius").oninput=e=>{$("radiusValue").value=e.target.value;if(selected?.tagName==="rect")selected.setAttribute("rx",e.target.value)};$("radius").onchange=snapshot;$("fillMode").onchange=()=>{const on=$("fillMode").value==="linear";$("gradientRow").classList.toggle("disabled",!on);applyGradient(true)};$("gradientColor").oninput=()=>{if($("fillMode").value==="linear")applyGradient(false)};$("gradientColor").onchange=()=>{if($("fillMode").value==="linear")applyGradient(true)};$("gradientAngle").oninput=e=>{$("gradientAngleValue").value=e.target.value+"°";if($("fillMode").value==="linear")applyGradient(false)};$("gradientAngle").onchange=()=>{if($("fillMode").value==="linear")applyGradient(true)};$("lineStyle").onchange=e=>{if(selected){selected.setAttribute("stroke-dasharray",e.target.value);snapshot()}};$("lineCap").onchange=e=>{if(selected){selected.setAttribute("stroke-linecap",e.target.value);snapshot()}};$("swapColors").onclick=()=>{const a=$("fill").value,b=$("stroke").value;$("fill").value=b;$("stroke").value=a;if(selected){selected.setAttribute("fill",b);selected.setAttribute("stroke",a);snapshot()}};$("fontFamily").onchange=e=>{if(selected?.tagName==="text"){selected.setAttribute("font-family",e.target.value);snapshot()}};$("fontSize").onchange=e=>{if(selected?.tagName==="text"){selected.setAttribute("font-size",e.target.value);drawSel();snapshot()}};$("fontWeight").onchange=e=>{if(selected?.tagName==="text"){selected.setAttribute("font-weight",e.target.value);snapshot()}};$("editText").onclick=()=>{if(selected?.tagName!=="text")return toast("Selecione um texto");const v=prompt("Texto:",selected.textContent);if(v!==null){selected.textContent=v;drawSel();snapshot()}};
-function applyBlur(commit=false){if(!selected)return toast("Selecione um objeto primeiro");const amount=Math.max(0,+$("blur").value||0),defs=canvas.querySelector("defs"),id="blur_"+selected.id,old=defs.querySelector("#"+id);$("blurValue").value=amount;selected.dataset.blur=amount;if(amount<=0){selected.removeAttribute("filter");old?.remove();if(commit)snapshot();return}const filter=old||mk("filter",{id,x:"-50%",y:"-50%",width:"200%",height:"200%","color-interpolation-filters":"sRGB"});let gaussian=filter.querySelector("feGaussianBlur");if(!gaussian){gaussian=mk("feGaussianBlur",{in:"SourceGraphic",edgeMode:"duplicate"});filter.append(gaussian)}gaussian.setAttribute("stdDeviation",amount);if(!old)defs.append(filter);selected.setAttribute("filter","url(#"+id+")");if(commit)snapshot()}
+function applyBlur(commit=false){
+  if(!selected)return toast("Selecione um objeto primeiro");
+  const amount=Math.max(0,+$("blur").value||0);
+  const defs=canvas.querySelector("defs");
+  const id="blur_"+selected.id;
+  let filter=defs.querySelector("#"+CSS.escape(id));
+  $("blurValue").value=amount;
+  selected.dataset.blur=amount;
+  if(amount<=0){
+    selected.removeAttribute("filter");
+    filter?.remove();
+    drawSel();
+    if(commit)snapshot();
+    return;
+  }
+  if(!filter){
+    filter=mk("filter",{id,filterUnits:"userSpaceOnUse",primitiveUnits:"userSpaceOnUse"});
+    filter.append(mk("feGaussianBlur",{in:"SourceGraphic"}));
+    defs.append(filter);
+  }
+  const b=selected.getBBox();
+  const margin=Math.max(20,amount*5);
+  filter.setAttribute("x",b.x-margin);
+  filter.setAttribute("y",b.y-margin);
+  filter.setAttribute("width",b.width+margin*2);
+  filter.setAttribute("height",b.height+margin*2);
+  filter.querySelector("feGaussianBlur").setAttribute("stdDeviation",amount);
+  selected.setAttribute("filter","url(#"+id+")");
+  drawSel();
+  if(commit)snapshot();
+}
 function applyGradient(commit=false){if(!selected)return toast("Selecione uma forma primeiro");let defs=canvas.querySelector("defs"),id="grad_"+selected.id,old=defs.querySelector("#"+id);if($("fillMode").value!=="linear"){selected.setAttribute("fill",$("fill").value);selected.dataset.fillMode="solid";if(commit)snapshot();return}const a=+$("gradientAngle").value*Math.PI/180,x=Math.cos(a),y=Math.sin(a),g=old||mk("linearGradient",{id});g.setAttribute("x1",(50-x*50)+"%");g.setAttribute("y1",(50-y*50)+"%");g.setAttribute("x2",(50+x*50)+"%");g.setAttribute("y2",(50+y*50)+"%");g.innerHTML="";g.append(mk("stop",{offset:"0%","stop-color":$("fill").value}),mk("stop",{offset:"100%","stop-color":$("gradientColor").value}));if(!old)defs.append(g);selected.setAttribute("fill","url(#"+id+")");selected.dataset.fillMode="linear";selected.dataset.gradientAngle=$("gradientAngle").value;if(commit)snapshot()}
 function copySelection(){if(selected){clipboard=selected.cloneNode(true);toast("Copiado")}}
 function pasteSelection(){if(!clipboard)return toast("Nada para colar");const n=clipboard.cloneNode(true);n.id="";ensure(n);move(n,16,16);objects.append(n);select(n);snapshot();toast("Colado")}
